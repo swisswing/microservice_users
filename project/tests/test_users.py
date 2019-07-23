@@ -5,6 +5,7 @@ from project.tests import BaseTestCase
 from project import db
 from project.api.models import User
 
+
 def add_user(username, email):
     user = User(username, email)
     db.session.add(user)
@@ -55,7 +56,8 @@ class TestUserService(BaseTestCase):
             self.assertIn('fail', data['status'])
 
     def test_add_user_invalid_json_keys(self):
-        """Ensure error is thrown if the JSON object does not have a username key"""
+        """Ensure error is thrown if the JSON object does not have
+        a username key"""
         with self.client as client:
             response = client.post(
                 '/users',
@@ -137,7 +139,7 @@ class TestUserService(BaseTestCase):
         add_user('test2', 'test2@gmail.com')
 
         with self.client as client:
-            response = self.client.get('/users')
+            response = client.get('/users')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn('success', data['status'])
@@ -162,17 +164,17 @@ class TestUserService(BaseTestCase):
         add_user('fletcher', 'fletcher@notreal.com')
 
         with self.client as client:
-            response = self.client.get('/')
+            response = client.get('/')
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'All Users', response.data)
             self.assertNotIn(b'<p>No users!</p>', response.data)
             self.assertIn(b'michael', response.data)
             self.assertIn(b'fletcher', response.data)
-    
+
     def test_main_add_user(self):
         """Ensure a new user can be added to the database via a POST request"""
         with self.client as client:
-            response = self.client.post(
+            response = client.post(
                 '/',
                 data=dict(username='cindy', email='cindy@abcdefg.com'),
                 follow_redirects=True
@@ -182,7 +184,6 @@ class TestUserService(BaseTestCase):
         self.assertNotIn(b'<p>No users!</p>', response.data)
         self.assertIn(b'cindy', response.data)
 
-            
 
 if __name__ == '__main__':
     unittest.main()

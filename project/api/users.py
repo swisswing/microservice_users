@@ -1,5 +1,3 @@
-import json
-
 from flask import Blueprint, request, render_template
 from flask_restful import Resource, Api
 from sqlalchemy import exc
@@ -40,7 +38,7 @@ class UsersList(Resource):
         }
         if not post_data:
             return response_object, 400
-        
+
         username = post_data.get('username')
         email = post_data.get('email')
         try:
@@ -58,7 +56,7 @@ class UsersList(Resource):
         except exc.IntegrityError:
             db.session.rollback()
             return response_object, 400
-    
+
 
 class Users(Resource):
     def get(self, user_id):
@@ -96,6 +94,7 @@ def index():
         db.session.commit()
     users = User.query.all()
     return render_template('index.html', users=users)
+
 
 api.add_resource(UserPing, '/users/ping')
 api.add_resource(UsersList, '/users')
